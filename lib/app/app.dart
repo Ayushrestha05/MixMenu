@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mixmenu/app/routes/export_routes.dart';
 import 'package:mixmenu/counter/counter.dart';
 import 'package:mixmenu/l10n/l10n.dart';
 import 'package:mixmenu/services/navigation_service.dart';
@@ -17,8 +18,9 @@ class App extends StatelessWidget {
       ),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: const CounterPage(),
-      navigatorKey: NavigationService.navigatorKey,
+      home: const MainScreen(),
+      // navigatorKey: NavigationService.navigatorKey,
     );
   }
 }
+
