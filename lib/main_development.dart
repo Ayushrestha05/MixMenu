@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mixmenu/app/app.dart';
 import 'package:mixmenu/bootstrap.dart';
 import 'package:mixmenu/services/service_locator.dart';
@@ -6,7 +7,6 @@ import 'package:mixmenu/services/shared_pref_services.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  print('Start Locator');
   await Future.wait(
     [
       setupLocator().then(
@@ -16,5 +16,5 @@ void main() async {
       ),
     ],
   );
-  bootstrap(() => const App());
+  bootstrap(() => App());
 }
