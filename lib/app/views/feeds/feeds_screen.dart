@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mixmenu/app/views/feeds/bloc/a_bar_above_bloc/a_bar_above_bloc.dart';
 import 'package:mixmenu/app/views/feeds/model/feed_model.dart';
+import 'package:mixmenu/services/service_locator.dart';
 
 class FeedScreen extends StatefulWidget {
   FeedScreen({super.key});
@@ -14,7 +15,7 @@ class FeedScreen extends StatefulWidget {
 }
 
 class _FeedScreenState extends State<FeedScreen>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   late TabController _tabController;
   ValueNotifier<int> _currentIndex = ValueNotifier<int>(0);
 
@@ -72,7 +73,7 @@ class _FeedScreenState extends State<FeedScreen>
                     case ABarAboveSuccess():
                       return ListView.builder(
                         key: PageStorageKey('aBarFeedKey'),
-                        itemExtent: 70,
+                        itemExtent: 120,
                         itemBuilder: (ctx, val) =>
                             buildFeedCard(state.feed!.items[val]),
                         itemCount: state.feed!.items.length,
@@ -134,22 +135,64 @@ class _FeedScreenState extends State<FeedScreen>
 
   /// Builds a Card for Feeds
   Widget buildFeedCard(RssItem data) {
-    return AnyLinkPreview(
-      link: data.link ?? '',
-      displayDirection: UIDirection.uiDirectionHorizontal,
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: Row(
+        children: [
+          Container(
+            height: 120,
+            width: 120,
+            decoration: BoxDecoration(color: Theme.of(context).cardColor),
+            child: Center(
+              child: Icon(Icons.image),
+            ),
+          ),
+          Expanded(
+              child: Column(
+            children: [
+              Text('${data.title ?? ''}'),
+              // buildFeedCategoryChips(data)
+            ],
+          ))
+        ],
+      ),
     );
-    // return Card(
-    //   clipBehavior: Clip.antiAlias,
-    //   child: Row(
-    //     children: [
-    //       Image.asset(
-    //         'assets/placeholder/img-placeholder.jpg',
-    //         height: 70,
-    //         width: 70,
-    //       ),
-    //       Text('${data.title ?? ''}')
-    //     ],
-    //   ),
-    // );
   }
+
+  Widget buildFeedCategoryChips(RssItem data) {
+    if (data.categories.length != 0) {
+      return Wrap(
+        spacing: 8,
+        children: data.categories
+            .take(2)
+            .toList()
+            .map((e) => ChoiceChip(
+                  selected: true,
+                  label: Text(capitalizeFirstLetterOfEveryWord(e.value ?? '')),
+                  backgroundColor:
+                      MaterialStateColor.resolveWith((states) => Colors.grey),
+                  labelStyle: TextStyle(color: Colors.black),
+                  elevation: 1,
+                  shadowColor: Colors.grey.shade300,
+                ))
+            .toList(),
+      );
+    } else {
+      return Container();
+    }
+  }
+
+  String capitalizeFirstLetterOfEveryWord(String text) {
+    List<String> words = text.split(" ");
+    List<String> capitalizedWords = [];
+
+    for (String word in words) {
+      capitalizedWords.add(word[0].toUpperCase() + word.substring(1));
+    }
+
+    return capitalizedWords.join(" ");
+  }
+
+  @override
+  bool get wantKeepAlive => true;
 }
