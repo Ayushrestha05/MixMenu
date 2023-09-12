@@ -22,36 +22,41 @@ class _ABarTabViewState extends State<ABarTabView>
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ABarAboveBloc, ABarAboveState>(builder: (ctx, state) {
-      switch (state) {
-        case ABarAboveInitial():
-          return Center(
-            child: ElevatedButton(
-              child: Text('Get Data'),
-              onPressed: () {
-                context.read<ABarAboveBloc>().add(ABarAboveGetFeedEvent());
-              },
-            ),
-          );
-        case ABarAboveLoading():
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        case ABarAboveSuccess():
-          return ListView.builder(
-            key: PageStorageKey('aBarFeedKey'),
-            itemExtent: 150,
-            itemBuilder: (ctx, val) =>
-                MiniNewsCard(news: state.feed!.items[val]),
-            itemCount: state.feed!.items.length,
-          );
+    return RefreshIndicator(
+      onRefresh: () async {
+        locator<ABarAboveBloc>()..add(ABarAboveGetFeedEvent());
+      },
+      child: BlocBuilder<ABarAboveBloc, ABarAboveState>(builder: (ctx, state) {
+        switch (state) {
+          case ABarAboveInitial():
+            return Center(
+              child: ElevatedButton(
+                child: Text('Get Data'),
+                onPressed: () {
+                  context.read<ABarAboveBloc>().add(ABarAboveGetFeedEvent());
+                },
+              ),
+            );
+          case ABarAboveLoading():
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          case ABarAboveSuccess():
+            return ListView.builder(
+              key: PageStorageKey('aBarFeedKey'),
+              itemExtent: 150,
+              itemBuilder: (ctx, val) =>
+                  MiniNewsCard(news: state.feed!.items[val]),
+              itemCount: state.feed!.items.length,
+            );
 
-        default:
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-      }
-    });
+          default:
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+        }
+      }),
+    );
   }
 
   @override

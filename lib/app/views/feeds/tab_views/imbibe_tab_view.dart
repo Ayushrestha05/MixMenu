@@ -22,36 +22,41 @@ class _ImbibeTabViewState extends State<ImbibeTabView>
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ImbibeBloc, ImbibeState>(builder: (ctx, state) {
-      switch (state) {
-        case ImbibeInitial():
-          return Center(
-            child: ElevatedButton(
-              child: Text('Get Data'),
-              onPressed: () {
-                context.read<ImbibeBloc>().add(ImbibeGetFeedEvent());
-              },
-            ),
-          );
-        case ImbibeLoading():
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        case ImbibeSuccess():
-          return ListView.builder(
-            key: PageStorageKey('imbibeFeedKey'),
-            itemExtent: 150,
-            itemBuilder: (ctx, val) =>
-                MiniNewsCard(news: state.feed!.items[val]),
-            itemCount: state.feed!.items.length,
-          );
+    return RefreshIndicator(
+      onRefresh: () async {
+        locator<ImbibeBloc>()..add(ImbibeGetFeedEvent());
+      },
+      child: BlocBuilder<ImbibeBloc, ImbibeState>(builder: (ctx, state) {
+        switch (state) {
+          case ImbibeInitial():
+            return Center(
+              child: ElevatedButton(
+                child: Text('Get Data'),
+                onPressed: () {
+                  context.read<ImbibeBloc>().add(ImbibeGetFeedEvent());
+                },
+              ),
+            );
+          case ImbibeLoading():
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          case ImbibeSuccess():
+            return ListView.builder(
+              key: PageStorageKey('imbibeFeedKey'),
+              itemExtent: 150,
+              itemBuilder: (ctx, val) =>
+                  MiniNewsCard(news: state.feed!.items[val]),
+              itemCount: state.feed!.items.length,
+            );
 
-        default:
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-      }
-    });
+          default:
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+        }
+      }),
+    );
   }
 
   @override

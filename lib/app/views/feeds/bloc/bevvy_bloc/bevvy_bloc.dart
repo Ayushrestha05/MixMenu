@@ -13,11 +13,18 @@ class BevvyBloc extends Bloc<BevvyEvent, BevvyState> {
     on<BevvyEvent>((event, emit) {});
 
     on<BevvyGetFeedEvent>((event, emit) async {
-      emit(BevvyLoading());
-      await FeedRepo.getFeed(feedType: 'bevvy').then((value) {
-        value.fold((l) => emit(BevvySuccess(feed: l as RssFeed)),
-            (r) => emit(BevvyInitial()));
-      });
+      if (state is BevvySuccess) {
+        await FeedRepo.getFeed(feedType: 'bevvy').then((value) {
+          value.fold((l) => emit(BevvySuccess(feed: l as RssFeed)),
+              (r) => emit(BevvyInitial()));
+        });
+      } else {
+        emit(BevvyLoading());
+        await FeedRepo.getFeed(feedType: 'bevvy').then((value) {
+          value.fold((l) => emit(BevvySuccess(feed: l as RssFeed)),
+              (r) => emit(BevvyInitial()));
+        });
+      }
     });
   }
 }

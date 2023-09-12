@@ -13,11 +13,18 @@ class ImbibeBloc extends Bloc<ImbibeEvent, ImbibeState> {
     on<ImbibeEvent>((event, emit) {});
 
     on<ImbibeGetFeedEvent>((event, emit) async {
-      emit(ImbibeLoading());
-      await FeedRepo.getFeed(feedType: 'imbibe').then((value) {
-        value.fold((l) => emit(ImbibeSuccess(feed: l as RssFeed)),
-            (r) => emit(ImbibeInitial()));
-      });
+      if (state is ImbibeSuccess) {
+        await FeedRepo.getFeed(feedType: 'imbibe').then((value) {
+          value.fold((l) => emit(ImbibeSuccess(feed: l as RssFeed)),
+              (r) => emit(ImbibeInitial()));
+        });
+      } else {
+        emit(ImbibeLoading());
+        await FeedRepo.getFeed(feedType: 'imbibe').then((value) {
+          value.fold((l) => emit(ImbibeSuccess(feed: l as RssFeed)),
+              (r) => emit(ImbibeInitial()));
+        });
+      }
     });
   }
 }

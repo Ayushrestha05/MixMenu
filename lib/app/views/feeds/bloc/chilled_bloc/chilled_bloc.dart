@@ -15,11 +15,18 @@ class ChilledBloc extends Bloc<ChilledEvent, ChilledState> {
     on<ChilledEvent>((event, emit) {});
 
     on<ChilledGetFeedEvent>((event, emit) async {
-      emit(ChilledLoading());
-      await FeedRepo.getFeed(feedType: 'chilled').then((value) {
-        value.fold((l) => emit(ChilledSuccess(feed: l as RssFeed)),
-            (r) => emit(ChilledInitial()));
-      });
+      if (state is ChilledSuccess) {
+        await FeedRepo.getFeed(feedType: 'chilled').then((value) {
+          value.fold((l) => emit(ChilledSuccess(feed: l as RssFeed)),
+              (r) => emit(ChilledInitial()));
+        });
+      } else {
+        emit(ChilledLoading());
+        await FeedRepo.getFeed(feedType: 'chilled').then((value) {
+          value.fold((l) => emit(ChilledSuccess(feed: l as RssFeed)),
+              (r) => emit(ChilledInitial()));
+        });
+      }
     });
   }
 }

@@ -40,42 +40,42 @@ class MiniNewsCard extends StatelessWidget {
         child: Row(
           children: [
             buildNewsImageContainer(news),
-            SizedBox(
-              width: 15.0,
-            ),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Text(
-                    news.title ?? '',
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16.0,
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Text(
+                      news.title ?? '',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16.0,
+                      ),
                     ),
-                  ),
-                  news.pubDate != null && (news.pubDate ?? '').isNotEmpty
-                      ? SizedBox(
-                          height: 5.0,
-                        )
-                      : SizedBox(),
-                  news.pubDate != null && (news.pubDate ?? '').isNotEmpty
-                      ? Text(
-                          (news.pubDate!.split(' ').take(4).toList()
-                                ..removeRange(0, 1))
-                              .join(' '),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: Color.fromRGBO(139, 144, 165, 1),
-                          ),
-                        )
-                      : SizedBox(),
-                ],
+                    news.pubDate != null && (news.pubDate ?? '').isNotEmpty
+                        ? SizedBox(
+                            height: 5.0,
+                          )
+                        : SizedBox(),
+                    news.pubDate != null && (news.pubDate ?? '').isNotEmpty
+                        ? Text(
+                            (news.pubDate!.split(' ').take(4).toList()
+                                  ..removeRange(0, 1))
+                                .join(' '),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Color.fromRGBO(139, 144, 165, 1),
+                            ),
+                          )
+                        : SizedBox(),
+                  ],
+                ),
               ),
             )
           ],

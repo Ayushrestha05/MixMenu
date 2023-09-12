@@ -22,36 +22,41 @@ class _ChilledTabViewState extends State<ChilledTabView>
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ChilledBloc, ChilledState>(builder: (ctx, state) {
-      switch (state) {
-        case ChilledInitial():
-          return Center(
-            child: ElevatedButton(
-              child: Text('Get Data'),
-              onPressed: () {
-                context.read<ChilledBloc>().add(ChilledGetFeedEvent());
-              },
-            ),
-          );
-        case ChilledLoading():
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        case ChilledSuccess():
-          return ListView.builder(
-            key: PageStorageKey('chilledFeedKey'),
-            itemExtent: 150,
-            itemBuilder: (ctx, val) =>
-                MiniNewsCard(news: state.feed!.items[val]),
-            itemCount: state.feed!.items.length,
-          );
+    return RefreshIndicator(
+      onRefresh: () async {
+        locator<ChilledBloc>()..add(ChilledGetFeedEvent());
+      },
+      child: BlocBuilder<ChilledBloc, ChilledState>(builder: (ctx, state) {
+        switch (state) {
+          case ChilledInitial():
+            return Center(
+              child: ElevatedButton(
+                child: Text('Get Data'),
+                onPressed: () {
+                  context.read<ChilledBloc>().add(ChilledGetFeedEvent());
+                },
+              ),
+            );
+          case ChilledLoading():
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          case ChilledSuccess():
+            return ListView.builder(
+              key: PageStorageKey('chilledFeedKey'),
+              itemExtent: 150,
+              itemBuilder: (ctx, val) =>
+                  MiniNewsCard(news: state.feed!.items[val]),
+              itemCount: state.feed!.items.length,
+            );
 
-        default:
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-      }
-    });
+          default:
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+        }
+      }),
+    );
   }
 
   @override
