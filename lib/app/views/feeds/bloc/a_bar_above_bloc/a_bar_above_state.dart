@@ -1,7 +1,7 @@
 part of 'a_bar_above_bloc.dart';
 
 @immutable
-abstract class ABarAboveState {}
+abstract class ABarAboveState extends Equatable {}
 
 class ABarAboveInitial extends ABarAboveState {
   @override
@@ -14,7 +14,7 @@ class ABarAboveLoading extends ABarAboveState {
 }
 
 class ABarAboveSuccess extends ABarAboveState {
-  RssFeed? feed;
+  final RssFeed? feed;
 
   ABarAboveSuccess({this.feed});
 

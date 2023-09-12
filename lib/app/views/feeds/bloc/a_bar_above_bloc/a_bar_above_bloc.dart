@@ -1,7 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:dart_rss/dart_rss.dart';
+import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-import 'package:mixmenu/app/views/feeds/repo/a_bar_repo.dart';
+import 'package:mixmenu/app/views/feeds/repo/feed_repo.dart';
 
 part 'a_bar_above_event.dart';
 
@@ -13,7 +14,7 @@ class ABarAboveBloc extends Bloc<ABarAboveEvent, ABarAboveState> {
 
     on<ABarAboveGetFeedEvent>((event, emit) async {
       emit(ABarAboveLoading());
-      await ABarRepo.getABarFeed().then((value) {
+      await FeedRepo.getFeed(feedType: 'aBar').then((value) {
         value.fold((l) => emit(ABarAboveSuccess(feed: l as RssFeed)),
             (r) => emit(ABarAboveInitial()));
       });

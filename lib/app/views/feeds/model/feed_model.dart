@@ -16,6 +16,6 @@ List<FeedModel> feeds = [
       name: 'Chilled',
       imageURL: 'https://i1.feedspot.com/4946272.jpg?t=1639829409'),
   FeedModel(
-      name: 'Art of Drinks',
-      imageURL: 'https://i1.feedspot.com/5569787.jpg?t=1684326422'),
+      name: 'Bevvy',
+      imageURL: 'https://i1.feedspot.com/129335.jpg?t=1614577064'),
 ];

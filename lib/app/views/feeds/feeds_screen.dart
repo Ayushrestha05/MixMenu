@@ -1,11 +1,12 @@
-import 'package:any_link_preview/any_link_preview.dart';
+// import 'package:any_link_preview/any_link_preview.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dart_rss/dart_rss.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mixmenu/app/views/feeds/bloc/a_bar_above_bloc/a_bar_above_bloc.dart';
 import 'package:mixmenu/app/views/feeds/model/feed_model.dart';
-import 'package:mixmenu/services/service_locator.dart';
+import 'package:mixmenu/app/views/feeds/tab_views/a_bar_tab_view.dart';
+import 'package:mixmenu/app/views/feeds/tab_views/bevvy_tab_view.dart';
+import 'tab_views/chilled_tab_view.dart';
+import 'tab_views/imbibe_tab_view.dart';
 
 class FeedScreen extends StatefulWidget {
   FeedScreen({super.key});
@@ -15,16 +16,12 @@ class FeedScreen extends StatefulWidget {
 }
 
 class _FeedScreenState extends State<FeedScreen>
-    with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  ValueNotifier<int> _currentIndex = ValueNotifier<int>(0);
 
   @override
   void initState() {
     _tabController = TabController(length: feeds.length, vsync: this);
-    _tabController.addListener(() {
-      _currentIndex.value = _tabController.index;
-    });
     super.initState();
   }
 
@@ -35,11 +32,12 @@ class _FeedScreenState extends State<FeedScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ValueListenableBuilder(
-                valueListenable: _currentIndex,
-                builder: (context, v, _) {
-                  return Text('${feeds[v].name}');
-                }),
+            Container(
+                margin: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                child: Text(
+                  'Feeds',
+                  style: Theme.of(context).textTheme.headlineMedium,
+                )),
             TabBar(
                 controller: _tabController,
                 dividerColor: Color(0x00000000),
@@ -50,44 +48,15 @@ class _FeedScreenState extends State<FeedScreen>
                     .map((e) =>
                         buildFeedSelectionContainer(feedIMGURL: e.imageURL))
                     .toList()),
+            SizedBox(
+              height: 15,
+            ),
             Expanded(
               child: TabBarView(controller: _tabController, children: [
-                BlocBuilder<ABarAboveBloc, ABarAboveState>(
-                    builder: (ctx, state) {
-                  switch (state) {
-                    case ABarAboveInitial():
-                      return Center(
-                        child: ElevatedButton(
-                          child: Text('Get Data'),
-                          onPressed: () {
-                            context
-                                .read<ABarAboveBloc>()
-                                .add(ABarAboveGetFeedEvent());
-                          },
-                        ),
-                      );
-                    case ABarAboveLoading():
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    case ABarAboveSuccess():
-                      return ListView.builder(
-                        key: PageStorageKey('aBarFeedKey'),
-                        itemExtent: 120,
-                        itemBuilder: (ctx, val) =>
-                            buildFeedCard(state.feed!.items[val]),
-                        itemCount: state.feed!.items.length,
-                      );
-
-                    default:
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                  }
-                }),
-                Text('Page 2'),
-                Text('Page 3'),
-                Text('Page 4'),
+                ABarTabView(),
+                ImbibeTabView(),
+                ChilledTabView(),
+                BevvyTabView(),
               ]),
             )
           ],
